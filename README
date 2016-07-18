@@ -1,0 +1,15 @@
+
+==================Steps to setup==================
+
+1. Create a virtualenv
+    From your project folder
+        $ virtualenv service_env
+
+
+2. Activate the environment
+    $ source service_env/bin/activate
+
+    to deactivate virtualenv
+        $ deactivate
+
+3. Install the python modules by running `pip install -r requirements.txt`
