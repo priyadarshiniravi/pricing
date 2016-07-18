@@ -1,5 +1,6 @@
 from unittest import TestCase
 from _pytest import unittest
+import json
 
 from src import application
 
@@ -24,6 +25,21 @@ class PricingEngineServiceTest(TestCase):
         result = self.application.get('/')
         self.assertEqual(result.status_code, 200)
 
+    def test_calculate_price_with_all_data(self):
+        d = dict(host_split=50.0,
+                 guest_price=4500.0,
+                 channel_fees=10.5,
+                 vat_percentage=20.0,
+                 floor_price=1500)
+
+        result = self.application.post('/host-pricing-engine/compute-price', data=d)
+        json_data = json.loads(result.data)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertIsNotNone(result.data)
+        self.assertIsNotNone(json_data['host_share'])
+        self.assertIsNotNone(json_data['vat'])
+        self.assertIsNotNone(json_data['ofs_share'])
 
 if __name__ == '__main__':
     unittest.main()
