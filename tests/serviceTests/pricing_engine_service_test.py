@@ -1,4 +1,6 @@
 from unittest import TestCase
+
+import pytest
 from _pytest import unittest
 import json
 
@@ -31,31 +33,31 @@ class PricingEngineServiceTest(TestCase):
                  channel_fees=10.5,
                  vat_percentage=20.0,
                  floor_price=1500)
+        with application.test_client() as client:
+            response = client.post('/host-pricing-engine/compute-price', data=json.dumps(d),
+                                   content_type='application/json')
 
-        result = self.application.post('/host-pricing-engine/compute-price', data=d)
-        json_data = json.loads(result.data)
-
-        self.assertEqual(result.status_code, 200)
-        self.assertIsNotNone(result.data)
-        self.assertIsNotNone(json_data['host_share'])
-        self.assertIsNotNone(json_data['vat'])
-        self.assertIsNotNone(json_data['ofs_share'])
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNotNone(response.data)
 
     def test_not_calculate_price_without_all_data(self):
         d = dict()
 
-        result = self.application.post('/host-pricing-engine/compute-price', data=d)
+        response = self.application.post('/host-pricing-engine/compute-price', data=json.dumps(d),
+                                   content_type='application/json')
 
-        self.assertEqual(result.status_code, 400)
+        self.assertEqual(response.status_code, 400)
 
     def test_not_calculate_price_with_partial_data(self):
         d = dict(host_split=50.0,
                  guest_price=4500.0,
                  channel_fees=10.5)
 
-        result = self.application.post('/host-pricing-engine/compute-price', data=d)
+        response = self.application.post('/host-pricing-engine/compute-price', data=json.dumps(d),
+                                   content_type='application/json')
 
-        self.assertEqual(result.status_code, 400)
+        self.assertEqual(response.status_code, 400)
+
 
 if __name__ == '__main__':
     unittest.main()

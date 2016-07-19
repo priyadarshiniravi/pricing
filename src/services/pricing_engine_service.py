@@ -11,11 +11,15 @@ def hello():
 
 @application.route('/host-pricing-engine/compute-price', methods=['POST'])
 def calculate_price():
-    host_split = request.form['host_split']
-    guest_price = request.form['guest_price']
-    channel_fees = request.form['channel_fees']
-    vat_percentage = request.form['vat_percentage']
-    floor_price = request.form['floor_price']
+    json = request.get_json()
+    try:
+        print(json['host_split'])
+        print(json['guest_price'])
+        print(json['channel_fees'])
+        print(json['vat_percentage'])
+        print(json['floor_price'])
+    except KeyError:
+        return "Invalid format", 400
 
     return flask.jsonify(host_share=50.0,
                          ofs_share=5000.0,
